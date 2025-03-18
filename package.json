@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest",
+    "coverage:serve": "serve ./coverage",
+    "test:coverage": "vitest run --coverage && npm run coverage:serve"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -22,12 +25,19 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^3.0.9",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
+    "jsdom": "^26.0.0",
+    "serve": "^14.2.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.0.9"
   }
 }
