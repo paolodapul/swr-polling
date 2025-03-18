@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { config } from "@/config/env";
 
 const paymentStatusStore = new Map();
-const TOTAL_DURATION_MS = 10 * 1000;
+const TOTAL_DURATION_MS = config.DELAY; // 1 minute
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
   }
 
   const elapsed = now - startTime;
-  const forceError = false;
+  const forceError = config.FORCE_ERROR;
 
   if (elapsed >= TOTAL_DURATION_MS) {
     if (forceError) {
