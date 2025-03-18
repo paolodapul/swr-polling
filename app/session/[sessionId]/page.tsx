@@ -1,22 +1,13 @@
 "use client";
 import { Loader2 } from "lucide-react";
-import useSWR from "swr";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useLongPolling } from "@/lib/use-long-polling";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Home() {
-  const router = useRouter();
   const { sessionId } = useParams();
-
-  useSWR(`/api?reference=${sessionId}`, fetcher, {
-    refreshInterval: 5000,
-    onSuccess: (data) => {
-      if (data.status === "success") {
-        router.push(`/payment-code`);
-      }
-    },
-  });
+  useLongPolling(sessionId as string, fetcher, "/payment-code", "/error");
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
