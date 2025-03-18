@@ -24,7 +24,7 @@ vi.mock("swr", async () => {
 });
 
 describe("useLongPolling", () => {
-  const sessionId = "test-session";
+  const endpoint = `/api?reference=123`;
   const fetcher = vi.fn();
   const onSuccessURL = "/success";
   const onErrorURL = "/error";
@@ -43,11 +43,11 @@ describe("useLongPolling", () => {
 
   it("should initialize SWR with correct parameters", () => {
     renderHook(() =>
-      useLongPolling(sessionId, fetcher, onSuccessURL, onErrorURL)
+      useLongPolling(endpoint, fetcher, onSuccessURL, onErrorURL)
     );
 
     expect(useSWR).toHaveBeenCalledWith(
-      `/api?reference=${sessionId}`,
+      endpoint,
       fetcher,
       expect.objectContaining({
         refreshInterval: 5000,
@@ -59,7 +59,7 @@ describe("useLongPolling", () => {
 
   it("should redirect to success URL on successful status", () => {
     renderHook(() =>
-      useLongPolling(sessionId, fetcher, onSuccessURL, onErrorURL)
+      useLongPolling(endpoint, fetcher, onSuccessURL, onErrorURL)
     );
 
     const swrConfig = (useSWR as unknown as Mock).mock.calls[0][2];
@@ -73,7 +73,7 @@ describe("useLongPolling", () => {
     const testError = new Error("Test error");
 
     renderHook(() =>
-      useLongPolling(sessionId, fetcher, onSuccessURL, onErrorURL)
+      useLongPolling(endpoint, fetcher, onSuccessURL, onErrorURL)
     );
 
     const swrConfig = (useSWR as unknown as Mock).mock.calls[0][2];
@@ -87,7 +87,7 @@ describe("useLongPolling", () => {
 
   it("should not redirect on non-success status", () => {
     renderHook(() =>
-      useLongPolling(sessionId, fetcher, onSuccessURL, onErrorURL)
+      useLongPolling(endpoint, fetcher, onSuccessURL, onErrorURL)
     );
 
     const swrConfig = (useSWR as unknown as Mock).mock.calls[0][2];

@@ -3,14 +3,14 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
 export const useLongPolling = (
-  sessionId: string,
+  endpoint: string,
   fetcher: any,
   onSuccessURL: string,
   onErrorURL: string
 ) => {
   const router = useRouter();
 
-  useSWR(`/api?reference=${sessionId}`, fetcher, {
+  useSWR(endpoint, fetcher, {
     refreshInterval: 5000,
     onSuccess: (data) => {
       if (data.status === "success") {
