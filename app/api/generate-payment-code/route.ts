@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 
 const paymentStatusStore = new Map();
-
-// Changed to 15 seconds
-const TOTAL_DURATION_MS = 15 * 1000; // 15 seconds
-const CHECKPOINTS = 3;
+const TOTAL_DURATION_MS = 10 * 1000;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -23,20 +20,30 @@ export async function GET(request: Request) {
   }
 
   const elapsed = now - startTime;
-
-  const checkpointInterval = TOTAL_DURATION_MS / CHECKPOINTS;
-  let status: "pending" | "success" = "pending";
+  const forceError = false;
 
   if (elapsed >= TOTAL_DURATION_MS) {
-    status = "success";
+    if (forceError) {
+      return NextResponse.json(
+        {
+          reference,
+          status: "error",
+          elapsedSeconds: Math.floor(elapsed / 1000),
+        },
+        { status: 500 }
+      );
+    } else {
+      return NextResponse.json({
+        reference,
+        status: "success",
+        elapsedSeconds: Math.floor(elapsed / 1000),
+      });
+    }
   }
 
   return NextResponse.json({
     reference,
-    status,
+    status: "pending",
     elapsedSeconds: Math.floor(elapsed / 1000),
-    nextCheckpointInSeconds: Math.ceil(
-      (checkpointInterval - (elapsed % checkpointInterval)) / 1000
-    ),
   });
 }
