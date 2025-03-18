@@ -3,15 +3,20 @@ import { Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useLongPolling } from "@/lib/use-long-polling";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+type PaymentStatus = {
+  reference: string;
+  status: string;
+  elapsedSeconds: number;
+  nextCheckpointInSeconds: number;
+};
 
 export default function Home() {
   const { sessionId } = useParams();
-  useLongPolling(
-    `/api?reference=${sessionId}`,
-    fetcher,
+  useLongPolling<PaymentStatus>(
+    `/generate-payment-code`,
     "/payment-code",
-    "/error"
+    "/error",
+    { reference: sessionId as string }
   );
 
   return (

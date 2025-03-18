@@ -1,25 +1,36 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import { apiClient } from "./api-client";
 
-export const useLongPolling = (
+interface WithStatus {
+  status: string;
+}
+
+export const useLongPolling = <T extends WithStatus>(
   endpoint: string,
-  fetcher: any,
   onSuccessURL: string,
-  onErrorURL: string
+  onErrorURL: string,
+  params?: Record<string, string>
 ) => {
   const router = useRouter();
+  const fetcher = () => apiClient.get<T>(endpoint, params);
 
-  useSWR(endpoint, fetcher, {
-    refreshInterval: 5000,
-    onSuccess: (data) => {
-      if (data.status === "success") {
-        router.push(onSuccessURL);
-      }
-    },
-    onError: (err) => {
-      console.log(err);
-      router.push(onErrorURL);
-    },
-  });
+  const { data, error } = useSWR(
+    params ? [endpoint, params] : endpoint,
+    fetcher,
+    {
+      refreshInterval: 5000,
+      onSuccess: (data) => {
+        if (data.status === "success") {
+          router.push(onSuccessURL);
+        }
+      },
+      onError: (err) => {
+        console.log(err);
+        router.push(onErrorURL);
+      },
+    }
+  );
+
+  return { data, error };
 };
