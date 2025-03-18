@@ -7,7 +7,12 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Home() {
   const { sessionId } = useParams();
-  useLongPolling(sessionId as string, fetcher, "/payment-code", "/error");
+  useLongPolling(
+    `/api?reference=${sessionId}`,
+    fetcher,
+    "/payment-code",
+    "/error"
+  );
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
